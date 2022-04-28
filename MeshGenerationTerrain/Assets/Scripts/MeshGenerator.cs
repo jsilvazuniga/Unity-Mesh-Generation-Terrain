@@ -19,18 +19,12 @@ public class MeshGenerator : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        StartCoroutine(CreateShape());
-      
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
+        CreateShape();
         UpdateMesh();
+
     }
 
-
-    IEnumerator CreateShape()
+    void CreateShape()
     {
         vertices = new Vector3[(xSize + 1) * (zSize + 1)];
 
@@ -64,7 +58,6 @@ public class MeshGenerator : MonoBehaviour
                 vert++;
                 tris += 6;
 
-                yield return new WaitForSeconds(.1f);
             }
             vert++;
         }
@@ -82,7 +75,8 @@ public class MeshGenerator : MonoBehaviour
 
         mesh.RecalculateNormals();
     }
-
+    
+    /*
     private void OnDrawGizmos()
     {
         if (vertices == null) return;
@@ -91,6 +85,6 @@ public class MeshGenerator : MonoBehaviour
         {
             Gizmos.DrawSphere(vertices[i], .1f);
         }
-    }
+    }*/
 
 }
