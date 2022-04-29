@@ -8,10 +8,14 @@ public class MeshGenerator : MonoBehaviour
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
-    Vector2[] uvs;
+    Color[] colors;
 
     public int xSize = 20;
     public int zSize = 20;
+
+    public Gradient gradient;
+    float minTerrainHeight;
+    float maxTerrainHeight;
 
 
     // Start is called before the first frame update
@@ -36,6 +40,12 @@ public class MeshGenerator : MonoBehaviour
             {
                 float y = Mathf.PerlinNoise(x * .3f, z * .3f) * 2f;
                 vertices [i] = new Vector3(x, y, z);
+
+                if(y>maxTerrainHeight)
+                    maxTerrainHeight = y;
+                if(y < minTerrainHeight)
+                    minTerrainHeight = y;
+
                 i++;
             }
         }
@@ -65,6 +75,7 @@ public class MeshGenerator : MonoBehaviour
             vert++;
         }
 
+        /*
         //UVS
         uvs = new Vector2[vertices.Length];
         for (int i = 0, z = 0; z <= zSize; z++)
@@ -73,6 +84,18 @@ public class MeshGenerator : MonoBehaviour
             {
 
                 uvs[i] = new Vector2((float)x / xSize, (float)z / zSize);
+                i++;
+            }
+        }*/
+
+        //Colors
+        colors = new Color[vertices.Length];
+        for (int i = 0, z = 0; z <= zSize; z++)
+        {
+            for (int x = 0; x <= xSize; x++)
+            {
+                float height = Mathf.InverseLerp(minTerrainHeight, maxTerrainHeight, vertices[i].y);
+                colors[i] = gradient.Evaluate(height);
                 i++;
             }
         }
@@ -85,7 +108,8 @@ public class MeshGenerator : MonoBehaviour
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-        mesh.uv = uvs;
+        // mesh.uv = uvs;
+        mesh.colors = colors;
 
         mesh.RecalculateNormals();
     }
